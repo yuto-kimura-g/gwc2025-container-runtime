@@ -1,15 +1,42 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 	"os/exec"
+	"runtime"
+
+	"golang.org/x/sys/unix"
 )
 
+type Config struct {
+	Name   string       `json:"name"`
+	Cgroup CgroupConfig `json:"cgroup"`
+	Rootfs RootfsConfig `json:"rootfs"`
+}
+
 func main() {
+	// このgoroutineが実行されるOSスレッドを1つに定め、固定
+	//  Namespaceやcgroupの設定を正しく行うため
+	runtime.GOMAXPROCS(1)
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+
+	// エントリーポイント以外の設定の読み込み
+	configFile, err := os.ReadFile("config.json")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	var c Config
+	if err := json.Unmarshal(configFile, &c); err != nil {
+		log.Fatalln(err)
+	}
+
+	// 指定されたコマンドの実行
 	switch os.Args[1] {
 	case "run":
-		if err := run(os.Args[2:]); err != nil {
+		if err := run(c, os.Args[2:]); err != nil {
 			log.Fatalln(err)
 		}
 
@@ -18,25 +45,26 @@ func main() {
 	}
 }
 
-func run(command []string) error {
+// runコマンド
+func run(c Config, entryPoint []string) error {
+	// Namespaceの設定
 	if err := SetupNamespace(); err != nil {
 		return err
 	}
 
-	if err := SetupChroot(); err != nil {
+	// cgroupの設定
+	if err := SetupCgroup(c.Name, os.Getpid(), c.Cgroup); err != nil {
 		return err
 	}
 
-	if err := SetupCgroup(); err != nil {
+	// rootfsの設定
+	_ = unix.Unshare(unix.CLONE_NEWNS) // rootfsで使うので、Namespace系の処理だが仮置き
+	if err := SetupRootfs(c.Rootfs); err != nil {
 		return err
 	}
 
-	cmd := exec.Command(command[0], command[1:]...)
+	// コンテナ(仮)内でエントリーポイントを実行
+	cmd := exec.Command(entryPoint[0], entryPoint[1:]...)
 	cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
-
-	if err := cmd.Run(); err != nil {
-		return err
-	}
-
-	return nil
+	return cmd.Run()
 }
