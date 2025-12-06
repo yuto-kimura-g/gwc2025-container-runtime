@@ -1,9 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/go,visualstudiocode,goland
 # Edited by Takuto Nagami (@logica0419)
 
-### Go ###
 main
 config.json
+root/
 
 ### GoLand ###
 

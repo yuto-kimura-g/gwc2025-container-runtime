@@ -11,3 +11,9 @@ main: *.go
 PHONY: run
 run: main
 	./main run bash
+
+PHONY: rootfs
+.ONESHELL: rootfs
+rootfs:
+	rm -r root && mkdir root
+	docker export $$(docker create "$${IMAGE}") | tar -C root -xvf -
