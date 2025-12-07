@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/k1LoW/errors"
 	"golang.org/x/sys/unix"
 )
 
@@ -38,7 +39,7 @@ func main() {
 	switch os.Args[1] {
 	case "run":
 		if err := run(c); err != nil {
-			log.Fatalln(err)
+			log.Fatalln(errors.StackTraces(err))
 		}
 
 	default:
@@ -50,18 +51,18 @@ func main() {
 func run(c Config) error {
 	// Namespaceの設定
 	if err := SetupNamespace(); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	// cgroupの設定
 	if err := SetupCgroup(c.Name, os.Getpid(), c.Cgroup); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	// rootfsの設定
 	_ = unix.Unshare(unix.CLONE_NEWNS) // rootfsで使うので、Namespace系の処理だが仮置き
 	if err := SetupRootfs(c.Rootfs); err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	// 作成した簡易コンテナ内でエントリーポイントを実行
