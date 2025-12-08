@@ -1,5 +1,5 @@
 PHONY: init
-init:
+init: spec/config.json
 	@go mod download
 	@/bin/echo -e "{\n  \"name\": \"container\",\n  \"entry_point\": [\"/bin/bash\"],\
 	\n  \"cgroup\": {\n    \"max_cpu_percent\": 100,\n    \"max_memory_mb\": 1024\n  },\
@@ -19,10 +19,10 @@ rootfs:
 	@docker export $$(docker create "$${IMAGE}") | tar -C rootfs -xvf -
 
 spec:
-	mkdir spec
+	@mkdir spec
 
-spec/config: spec
-	runc spec -b spec
+spec/config.json: spec
+	@runc spec -b spec
 
 PHONY: clean
 clean:

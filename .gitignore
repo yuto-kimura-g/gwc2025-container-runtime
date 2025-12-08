@@ -4,6 +4,7 @@
 main
 config.json
 rootfs/
+spec/
 
 ### GoLand ###
 
