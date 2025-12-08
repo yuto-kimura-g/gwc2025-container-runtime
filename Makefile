@@ -18,7 +18,14 @@ rootfs:
 	@mkdir -p rootfs
 	@docker export $$(docker create "$${IMAGE}") | tar -C rootfs -xvf -
 
+spec:
+	mkdir spec
+
+spec/config: spec
+	runc spec -b spec
+
 PHONY: clean
 clean:
 	@rm -f main
 	@rm -rf rootfs
+	@rm -rf spec
