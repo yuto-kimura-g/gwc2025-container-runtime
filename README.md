@@ -3,7 +3,7 @@
 このリポジトリは、[Go WorkshopConference 2025 IN KOBE](https://gwc.gocon.jp/2025/)にて開催した、
 [低レベルコンテナランタイム自作講座 ～コンテナ技術の地盤を理解する～](https://go-workshop-conference.connpass.com/event/375445/)のリポジトリです。
 
-// TODO: ここに画像を貼る
+![メインイメージ](./docs/public/image.png)
 
 ## `./`: ハンズオン用テンプレート
 
@@ -64,3 +64,8 @@ docs
 ├── index.md
 └── public
 ```
+
+## イベント画像について
+
+- The Go gopher was designed by Renée French.
+- 本画像はGoogle Gemini及びNano Banana Proを利用して生成し、Takuto Nagamiが独自に編集を加えたものです。
