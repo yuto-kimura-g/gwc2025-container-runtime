@@ -15,9 +15,9 @@ run: main
 
 .ONESHELL: rootfs
 rootfs:
-	@if [ -z "$${IMAGE}" ]; then echo "Error: IMAGE環境変数が設定されていません"; exit	1; fi
 	@mkdir -p rootfs
-	@docker export $$(docker create "$${IMAGE}") | tar -C rootfs -xvf -
+	@docker export $$(docker create ubuntu) | tar -C rootfs -xvf -
+	@cp ./dev/stress ./rootfs/usr/bin
 
 spec:
 	@mkdir spec

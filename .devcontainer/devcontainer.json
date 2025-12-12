@@ -9,7 +9,8 @@
     },
     "ghcr.io/devcontainers/features/go:1": {
       "version": "latest"
-    }
+    },
+    "ghcr.io/rails/devcontainer/features/bun:1.0.2": {}
   },
-  "postCreateCommand": "make init && IMAGE=ubuntu make rootfs"
+  "postCreateCommand": "make init && make rootfs"
 }

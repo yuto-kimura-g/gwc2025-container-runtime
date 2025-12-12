@@ -42,9 +42,10 @@ make run
 ```
 
 - `rootfs`ディレクトリの生成
+  - `ubuntu:latest`イメージの中身がコピーされます
 
 ```bash
-IMAGE={元にしたいコンテナイメージ} make rootfs
+make rootfs
 ```
 
 ## `/docs`: 教材
